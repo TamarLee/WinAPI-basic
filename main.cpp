@@ -3,36 +3,26 @@
 #define ID_BTN 1
 #define ID_BUTTON 2
 #define ID_TEXTBOX 3
+#define ID_FILE_NEW 4
+#define ID_FILE_OPEN 5
+#define ID_FILE_EXIT 6
 
 static HWND hwndTextbox;
+
+HMENU hMenu;
+
+void AddMenus(HWND);
 
 /* This is where all the input to the window goes to */
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
 	switch(Message) {
 		
 		
-		
-		
-		
-		
 		case WM_CREATE: {
 			
 			// create menu {
 			
-			HMENU hMenubar = CreateMenu();
-			HMENU hFile = CreateMenu();
-			HMENU hOptions = CreateMenu();
-			
-			
-			AppendMenu(hMenubar, MF_POPUP, (UINT_PTR)hFile, "File");
-			AppendMenu(hMenubar, MF_POPUP, NULL, "Edit");
-			AppendMenu(hMenubar, MF_POPUP, (UINT_PTR)hOptions, "Options");
-			
-			AppendMenu(hFile, MF_STRING, NULL, "Exit");
-			AppendMenu(hOptions, MF_STRING, NULL, "one");
-			AppendMenu(hOptions, MF_STRING, NULL, "two");
-
-			SetMenu(hwnd, hMenubar);
+			AddMenus(hwnd);
 		
 			// }
 			
@@ -67,6 +57,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 		}
 		
 		case WM_COMMAND: {
+			
+			
+			switch(wParam) {
+				case 1: {
+					MessageBeep(MB_OK);
+					break;
+				}
+				
+				case ID_FILE_EXIT: {
+					DestroyWindow(hwnd);
+					break;
+				}
+			}
+			
 			
 			// action for default button
 			
@@ -141,7 +145,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	hwnd = CreateWindowEx(WS_EX_CLIENTEDGE,
 		"WindowClass",
-		"Tamara's App",
+		"My App",
 		WS_VISIBLE|
 		WS_SYSMENU,
 		CW_USEDEFAULT, /* x */
@@ -165,4 +169,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		DispatchMessage(&msg); /* Send it to WndProc */
 	}
 	return msg.wParam;
+}
+
+
+void AddMenus(HWND hwnd) {
+	
+	hMenu = CreateMenu();
+	HMENU hFile = CreateMenu();
+	HMENU hSub = CreateMenu();
+	
+	AppendMenu(hSub, MF_STRING, NULL, "One");
+	
+	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFile, "File");
+	AppendMenu(hMenu, MF_STRING, NULL, "Edit");
+	
+	AppendMenu(hFile, MF_STRING, ID_FILE_NEW, "New");
+	AppendMenu(hFile, MF_POPUP, (UINT_PTR)hSub, "Open");
+	AppendMenu(hFile, MF_SEPARATOR, NULL, NULL);
+	AppendMenu(hFile, MF_STRING, ID_FILE_EXIT, "Exit");
+		
+	SetMenu(hwnd, hMenu);
+	
 }
