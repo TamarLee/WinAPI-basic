@@ -1,8 +1,8 @@
 #include <windows.h>
 
 #define ID_BTN 1
-#define ID_BUTTON 3
-#define ID_TEXTBOX 2
+#define ID_BUTTON 2
+#define ID_TEXTBOX 3
 
 static HWND hwndTextbox;
 
@@ -17,16 +17,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 		
 		case WM_CREATE: {
 			
+			// create menu {
+			
 			HMENU hMenubar = CreateMenu();
 			HMENU hFile = CreateMenu();
 			HMENU hOptions = CreateMenu();
 			
 			
-			AppendMenu(hMenubar, MF_POPUP, NULL, "Main");
+			AppendMenu(hMenubar, MF_POPUP, (UINT_PTR)hFile, "File");
+			AppendMenu(hMenubar, MF_POPUP, NULL, "Edit");
+			AppendMenu(hMenubar, MF_POPUP, (UINT_PTR)hOptions, "Options");
 			
+			AppendMenu(hFile, MF_STRING, NULL, "Exit");
+			AppendMenu(hOptions, MF_STRING, NULL, "one");
+			AppendMenu(hOptions, MF_STRING, NULL, "two");
+
 			SetMenu(hwnd, hMenubar);
 		
-		
+			// }
+			
+			
 			hwndTextbox = CreateWindow(
 				TEXT("edit"), 
 				TEXT(""), 
