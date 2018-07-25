@@ -6,12 +6,15 @@
 #define ID_FILE_NEW 4
 #define ID_FILE_OPEN 5
 #define ID_FILE_EXIT 6
+#define ID_TREEVIEW 7
 
 static HWND hwndTextbox;
 
 HMENU hMenu;
 
 void AddMenus(HWND);
+HWND CreateATreeView(HWND);
+void InitCommonControls();
 
 /* This is where all the input to the window goes to */
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
@@ -21,7 +24,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 		case WM_CREATE: {
 			
 			// create menu {
-			
+			CreateATreeView(hwnd);
 			AddMenus(hwnd);
 		
 			// }
@@ -153,6 +156,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		700, /* width */
 		550, /* height */
 		NULL,NULL,hInstance,NULL);
+		
+	
 
 	if(hwnd == NULL) {
 		MessageBox(NULL, "Window Creation Failed!","Error!",MB_ICONEXCLAMATION|MB_OK);
@@ -191,3 +196,51 @@ void AddMenus(HWND hwnd) {
 	SetMenu(hwnd, hMenu);
 	
 }
+
+// Create a tree-view control. 
+// Returns the handle to the new control if successful,
+// or NULL otherwise. 
+// hwndParent - handle to the control's parent window. 
+// lpszFileName - name of the file to parse for tree-view items.
+// g_hInst - the global instance handle.
+// ID_TREEVIEW - the resource ID of the control.
+
+HWND CreateATreeView(HWND hwndParent)
+{ 
+    RECT rcClient;  // dimensions of client area 
+    HWND hwndTV;    // handle to tree-view control 
+
+    // Ensure that the common control DLL is loaded. 
+    InitCommonControls(); 
+
+    // Get the dimensions of the parent window's client area, and create 
+    // the tree-view control. 
+    GetClientRect(hwndParent, &amp, rcClient); 
+    hwndTV = CreateWindowEx(0,
+                            WC_TREEVIEW,
+                            TEXT("Tree View"),
+                            WS_VISIBLE | WS_CHILD | WS_BORDER, 
+                            0, 
+                            0, 
+                            rcClient.right, 
+                            rcClient.bottom,
+                            hwndParent, 
+                            (HMENU)ID_TREEVIEW, 
+                            g_hInst, 
+                            NULL); 
+
+    // Initialize the image list, and add items to the control. 
+    // InitTreeViewImageLists and InitTreeViewItems are application- 
+    // defined functions, shown later. 
+    if (!InitTreeViewImageLists(hwndTV) || 
+                !InitTreeViewItems(hwndTV))
+    { 
+        DestroyWindow(hwndTV); 
+        return FALSE; 
+    } 
+    return hwndTV;
+}
+void InitCommonControls(
+
+);
+
